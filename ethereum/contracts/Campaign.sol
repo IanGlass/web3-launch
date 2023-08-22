@@ -1,5 +1,18 @@
 pragma solidity ^0.4.17;
 
+contract Factory {
+    address[] public deployedCampaigns;
+
+    function createCampaign(uint minimumContribution) public {
+        address newCampaign = new Campaign(minimumContribution);
+        deployedCampaigns.push(newCampaign);
+    }
+
+    function getDeployedCampaigns() public view returns (address[]) {
+        return deployedCampaigns;
+    }
+}
+
 contract Campaign {
     struct Request  {
         // Explain to approvers why the request is being made
