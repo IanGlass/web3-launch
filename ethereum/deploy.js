@@ -1,7 +1,9 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 const compiledFactory = require('./build/CampaignFactory.json');
-require('dotenv').config()
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
 
 const provider = new HDWalletProvider(
   process.env.METAMASK_MNEMONIC,
@@ -23,6 +25,7 @@ const deploy = async () => {
     .send({ gas: '1000000', from: accounts[0] });
 
   console.log('Contract deployed to', result.options.address);
+  fs.writeFileSync(path.resolve(__dirname, '../', 'FACTORY_ADDRESS'), result.options.address);
   provider.engine.stop();
 };
 deploy();
