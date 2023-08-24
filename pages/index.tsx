@@ -1,9 +1,17 @@
-import { Inter } from 'next/font/google'
-import React from 'react'
+import React from 'react';
+import factory from '../ethereum/factory';
 
-export default function Home() {
-  return (
-    <main>
-    </main>
-  )
+export async function getServerSideProps() {
+  return {
+    props: {
+      campaigns: await factory.methods.getDeployedCampaigns().call()
+    }
+  }
+}
+
+export default function Home({ campaigns }) {
+  console.log(campaigns);
+  return <main>
+    <div>hello</div>
+  </main>;
 }

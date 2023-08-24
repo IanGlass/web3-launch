@@ -1,14 +1,16 @@
-pragma solidity ^0.4.17;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.9;
 
 contract CampaignFactory {
-    address[] public deployedCampaigns;
+    address payable[] public deployedCampaigns;
 
-    function createCampaign(uint minimumContribution) public {
-        address newCampaign = new Campaign(minimumContribution);
-        deployedCampaigns.push(newCampaign);
+    function createCampaign(uint minimum) public {
+        address newCampaign = address(new Campaign(minimum));
+        deployedCampaigns.push(payable(newCampaign));
     }
 
-    function getDeployedCampaigns() public view returns (address[]) {
+    function getDeployedCampaigns() public view returns (address payable[] memory) {
         return deployedCampaigns;
     }
 }
@@ -43,7 +45,7 @@ contract Campaign {
         _;
     }
 
-    constructor(uint minimum) public {
+    constructor(uint minimum) {
         manager = tx.origin;
         minimumContribution = minimum;
     }
@@ -55,16 +57,13 @@ contract Campaign {
         approversCount++;
     }
 
-    function createRequest(string description, uint value, address recipient) public onlyManager {
-        // require(address(this).balance >= value);
-        Request memory newRequest = Request({ 
-            description: description,
-            value: value, 
-            recipient: recipient,
-            complete: false,
-            approvalCount: 0
-        });
-        requests.push(newRequest);
+    function createRequest(string memory description, uint value, address recipient) public onlyManager {
+        Request storage newRequest = requests.push(); 
+        newRequest.description = description;
+        newRequest.value= value;
+        newRequest.recipient= recipient;
+        newRequest.complete= false;
+        newRequest.approvalCount= 0;
     }
 
     function approveRequest(uint requestIndex) public {
@@ -88,7 +87,7 @@ contract Campaign {
         // Ensure request has at least 50% approvals of all Campaign contributors
         require(request.approvalCount > (approversCount / 2));
 
-        request.recipient.transfer(request.value);
+        payable(request.recipient).transfer(request.value);
         request.complete = true;
     }
 }

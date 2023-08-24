@@ -1,9 +1,10 @@
-const web3 = require('./web3');
-const CampaignFactory = require('./build/CampaignFactory.json');
-const fs = require('fs');
-const path = require('path');
+import web3 from "./web3";
+import CampaignFactory from "./build/CampaignFactory.json";
+import fs from 'fs';
 
-export default new web3.eth.Contract(
-  JSON.parse(CampaignFactory.interface),
-  fs.readFileSync(path.resolve(__dirname, '../', 'FACTORY_ADDRESS'), 'utf-8')
+const instance = new web3.eth.Contract(
+  CampaignFactory.abi,
+  fs.readFileSync('./FACTORY_ADDRESS', 'utf-8')
 );
+
+export default instance;
