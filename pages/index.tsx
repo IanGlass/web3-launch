@@ -1,11 +1,12 @@
 import React from 'react';
-import factory from '../ethereum/factory';
+import createFactory from '../ethereum/factory';
 import { Card, Button } from 'semantic-ui-react';
+import fs from 'fs';
 
 export async function getServerSideProps() {
   return {
     props: {
-      campaigns: await factory.methods.getDeployedCampaigns().call(),
+      campaigns: await createFactory(fs.readFileSync('./FACTORY_ADDRESS', 'utf-8')).methods.getDeployedCampaigns().call(),
     },
   };
 }
