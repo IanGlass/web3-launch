@@ -1,16 +1,14 @@
-// SPDX-License-Identifier: MIT
-
-pragma solidity ^0.8.9;
+pragma solidity ^0.4.17;
 
 contract CampaignFactory {
-    address payable[] public deployedCampaigns;
+    address[] public deployedCampaigns;
 
     function createCampaign(uint minimum) public {
         address newCampaign = address(new Campaign(minimum));
-        deployedCampaigns.push(payable(newCampaign));
+        deployedCampaigns.push(newCampaign);
     }
 
-    function getDeployedCampaigns() public view returns (address payable[] memory) {
+    function getDeployedCampaigns() public view returns (address [] memory) {
         return deployedCampaigns;
     }
 }
@@ -45,7 +43,7 @@ contract Campaign {
         _;
     }
 
-    constructor(uint minimum) {
+    constructor(uint minimum) public {
         manager = tx.origin;
         minimumContribution = minimum;
     }
@@ -58,12 +56,15 @@ contract Campaign {
     }
 
     function createRequest(string memory description, uint value, address recipient) public onlyManager {
-        Request storage newRequest = requests.push(); 
-        newRequest.description = description;
-        newRequest.value= value;
-        newRequest.recipient= recipient;
-        newRequest.complete= false;
-        newRequest.approvalCount= 0;
+        Request memory newRequest = Request({
+           description: description,
+           value: value,
+           recipient: recipient,
+           complete: false,
+           approvalCount: 0
+        });
+
+        requests.push(newRequest);
     }
 
     function approveRequest(uint requestIndex) public {
@@ -87,7 +88,7 @@ contract Campaign {
         // Ensure request has at least 50% approvals of all Campaign contributors
         require(request.approvalCount > (approversCount / 2));
 
-        payable(request.recipient).transfer(request.value);
+        request.recipient.transfer(request.value);
         request.complete = true;
     }
 }
