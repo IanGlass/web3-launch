@@ -1,37 +1,33 @@
 import React from 'react';
 import { Menu, Button } from 'semantic-ui-react';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export default function Header() {
-  const router = useRouter();
   return (
     <Menu style={{ marginTop: '10px' }}>
       <Menu.Item>
-        <Button
-          style={{ boxShadow: 'none' }}
-          basic
-          onClick={() => router.push('/')}
-        >
-          CrowdCoin
-        </Button>
+        <Link href='/'>
+          <Button style={{ boxShadow: 'none' }} basic>
+            CrowdCoin
+          </Button>
+        </Link>
       </Menu.Item>
       <Menu.Menu position='right'>
         <Menu.Item>
-          <Button
-            style={{ boxShadow: 'none' }}
-            basic
-            onClick={() => router.push('/campaigns')}
-          >
-            Campaigns
-          </Button>
+          <Link href='/campaigns'>
+            <Button style={{ boxShadow: 'none' }} basic>
+              Campaigns
+            </Button>
+          </Link>
         </Menu.Item>
         <Menu.Item>
-          <Button
-            style={{ boxShadow: 'none' }}
-            onClick={() => router.push('/campaigns/new')}
-            icon='add'
-            basic
-          />
+          <Link href='/campaigns/new'>
+            <Button
+              style={{ boxShadow: 'none' }}
+              icon='add'
+              basic
+            />
+          </Link>
         </Menu.Item>
       </Menu.Menu>
     </Menu>

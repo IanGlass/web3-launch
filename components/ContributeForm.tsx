@@ -35,9 +35,9 @@ export default function ContributeForm({ address }: Props) {
   };
 
   return (
-    <Form>
+    <Form error={!!error}>
       <h3>Contribute to this campaign!</h3>
-      <Form.Field>
+      <Form.Field >
         <label>Amount to contribute</label>
         <Input
           label='ether'

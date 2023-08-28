@@ -1,12 +1,13 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import createCampaign from '@/ethereum/campaign';
-import { Card, Grid } from 'semantic-ui-react';
+import Campaign from '@/ethereum/campaign';
+import { Card, Grid, Button } from 'semantic-ui-react';
 import web3 from '@/ethereum/web3';
 import ContributeForm from '@/components/ContributeForm';
+import Link from 'next/link';
 
 export async function getServerSideProps(props) {
-  const summary = await createCampaign(props.query.address)
+  const summary = await Campaign(props.query.address)
     .methods.getSummary()
     .call();
   return {
@@ -75,12 +76,21 @@ export default function CampaignDetails({ summary }) {
     <>
       <h3>Campaign Details</h3>
       <Grid>
-        <Grid.Column width={10}>
-          <Card.Group items={renderDetails()} />
-        </Grid.Column>
-        <Grid.Column width={6}>
-          <ContributeForm address={address} />
-        </Grid.Column>
+        <Grid.Row>
+          <Grid.Column width={10}>
+            <Card.Group items={renderDetails()} />
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <ContributeForm address={address} />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Link href={`/campaigns/${address}/requests`}>
+              <Button basic>View requests</Button>
+            </Link>
+          </Grid.Column>
+        </Grid.Row>
       </Grid>
     </>
   );

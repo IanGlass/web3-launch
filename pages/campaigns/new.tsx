@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { Form, Button, Input, Message } from 'semantic-ui-react';
-import createFactory from '@/ethereum/factory';
+import Factory from '@/ethereum/factory';
 import fs from 'fs';
 import web3 from '@/ethereum/web3';
 import { useRouter } from 'next/router';
@@ -27,7 +27,7 @@ export default function NewCampaign({ address }) {
     setError('');
     try {
       const accounts = await web3.eth.getAccounts();
-      await createFactory(address)
+      await Factory(address)
       .methods
       .createCampaign(minimumContribution)
       .send({
@@ -44,8 +44,8 @@ export default function NewCampaign({ address }) {
   return (
     <>
       <h3>Create a Campaign</h3>
-      <Form onSubmit={createCampaign}>
-        <Form.Field error={!!error}>
+      <Form onSubmit={createCampaign} error={!!error}>
+        <Form.Field>
           <label>Minimum Contribution</label>
           <Input
             value={minimumContribution}
