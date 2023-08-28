@@ -2,6 +2,8 @@ import React from 'react';
 import createFactory from '../ethereum/factory';
 import { Card, Button } from 'semantic-ui-react';
 import fs from 'fs';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export async function getServerSideProps() {
   return {
@@ -12,10 +14,11 @@ export async function getServerSideProps() {
 }
 
 export default function Home({ campaigns }) {
+  const router = useRouter();
   const renderCampaigns = () =>
     campaigns.map((address) => ({
       header: address,
-      description: <a>View Campaign</a>,
+      description: <Link href={`/campaigns/${address}`}>View Campaign</Link>,
       meta: '',
       fluid: true,
     }));
@@ -27,6 +30,7 @@ export default function Home({ campaigns }) {
         floated='right'
         content='Create Campaign'
         icon='add circle'
+        onClick={() => router.push('/campaigns/new')}
         primary
       />
       <Card.Group items={renderCampaigns()} />
