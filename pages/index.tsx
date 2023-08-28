@@ -1,5 +1,5 @@
 import React from 'react';
-import createFactory from '../ethereum/factory';
+import createFactory from '@/ethereum/factory';
 import { Card, Button } from 'semantic-ui-react';
 import fs from 'fs';
 import { useRouter } from 'next/router';
@@ -36,4 +36,4 @@ export default function Home({ campaigns }) {
       <Card.Group items={renderCampaigns()} />
     </div>
   );
-}
+};

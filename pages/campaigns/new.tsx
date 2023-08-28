@@ -1,9 +1,18 @@
 import React, { FormEvent, useState } from 'react';
 import { Form, Button, Input, Message } from 'semantic-ui-react';
-import createFactory from '../../ethereum/factory';
+import createFactory from '@/ethereum/factory';
 import fs from 'fs';
-import web3 from '../../ethereum/web3';
+import web3 from '@/ethereum/web3';
 import { useRouter } from 'next/router';
+
+export function getServerSideProps() {
+  const address = fs.readFileSync('./FACTORY_ADDRESS', 'utf-8');
+  return {
+    props: {
+      address,
+    }
+  }
+}
 
 export default function NewCampaign({ address }) {
   const router = useRouter();
@@ -54,11 +63,3 @@ export default function NewCampaign({ address }) {
   );
 }
 
-export function getServerSideProps() {
-  const address = fs.readFileSync('./FACTORY_ADDRESS', 'utf-8');
-  return {
-    props: {
-      address,
-    }
-  }
-}
