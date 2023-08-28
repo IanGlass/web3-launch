@@ -1,26 +1,39 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Button } from 'semantic-ui-react';
+import { Button, Table } from 'semantic-ui-react';
 import Campaign from '@/ethereum/campaign';
+import { map } from 'async';
+import RequestRow from '@/components/RequestRow';
 
 export async function getServerSideProps(props) {
-  const summary = await Campaign(props.query.address)
-    .methods.getSummary()
+  const requestCount = await Campaign(props.query.address)
+    .methods.getRequestsCount()
     .call();
+
+  const requests = await map(
+    Array.from({ length: requestCount }, (_, index) => index),
+    async (index) =>
+      await Campaign(props.query.address).methods.requests(index).call()
+  );
+
+  const approversCount = await Campaign(props.query.address).methods.approversCount().call()
+
   return {
     props: {
-      summary: {
-        minimumContribution: summary[0],
-        balance: web3.utils.fromWei(summary[1], 'ether'),
-        requestsCount: summary[2],
-        approversCount: summary[3],
-        manager: summary[4],
-      },
+      approversCount,
+      requests: requests.map((request) => ({
+        description: request.description,
+        amount: request.value,
+        recipient: request.recipient,
+        complete: request.complete,
+        approvalCount: parseInt(request.approvalCount),
+      })),
     },
   };
 }
-export default function Requests() {
+export default function Requests({ requests, approversCount }) {
+  const { Row, Header, HeaderCell, Body } = Table;
   const router = useRouter();
   const { address } = router.query;
 
@@ -28,8 +41,32 @@ export default function Requests() {
     <>
       <h3>Requests</h3>
       <Link href={`/campaigns/${address}/requests/new`}>
-        <Button primary>New Request</Button>
+        <Button primary>New request</Button>
       </Link>
+      <Table>
+        <Header>
+          <Row>
+            <HeaderCell>ID</HeaderCell>
+            <HeaderCell>Description</HeaderCell>
+            <HeaderCell>Amount</HeaderCell>
+            <HeaderCell>Recipient</HeaderCell>
+            <HeaderCell>Approval Count</HeaderCell>
+            <HeaderCell>Approve</HeaderCell>
+            <HeaderCell>Finalize</HeaderCell>
+          </Row>
+        </Header>
+        <Body>
+          {requests.map((request, index: number) => (
+            <RequestRow
+              key={index}
+              id={index}
+              request={request}
+              address={address}
+              approversCount={approversCount}
+            />
+          ))}
+        </Body>
+      </Table>
     </>
   );
 }

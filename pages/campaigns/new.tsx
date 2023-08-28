@@ -21,8 +21,6 @@ export default function NewCampaign({ address }) {
   const [loading, setLoading] = useState(false);
 
   const createCampaign = async (event: FormEvent) => {
-    event.preventDefault();
-
     setLoading(true);
     setError('');
     try {

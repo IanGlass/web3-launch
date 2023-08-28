@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Button, Form, Input, Message } from 'semantic-ui-react';
 import Campaign from '@/ethereum/campaign';
 import web3 from '@/ethereum/web3';
+import Link from 'next/link';
 
 export default function NewRequest() {
   const router = useRouter();
@@ -15,14 +16,16 @@ export default function NewRequest() {
   const [recipient, setRecipient] = useState();
 
   const createRequest = async (event: FormEvent) => {
-    event.preventDefault();
-
     setLoading(true);
     setError('');
     try {
       const accounts = await web3.eth.getAccounts();
       await Campaign(address)
-        .methods.createRequest(description, web3.utils.toWei(value, 'ether'), recipient)
+        .methods.createRequest(
+          description,
+          web3.utils.toWei(value, 'ether'),
+          recipient
+        )
         .send({
           from: accounts[0],
         });
@@ -36,6 +39,7 @@ export default function NewRequest() {
 
   return (
     <>
+      <Link href={`/campaigns/${address}/requests`}>Back</Link>
       <h3>Create a request to spend campaign funds</h3>
       <Form onSubmit={createRequest} error={!!error}>
         <Form.Field>
@@ -46,7 +50,7 @@ export default function NewRequest() {
           />
         </Form.Field>
 
-        <Form.Field >
+        <Form.Field>
           <label>Value in Ether</label>
           <Input
             value={value}

@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { Button, Form, Input, Message } from 'semantic-ui-react';
-import createCampaign from '@/ethereum/campaign';
+import Campaign from '@/ethereum/campaign';
 import web3 from '@/ethereum/web3';
 import { useRouter } from 'next/router';
 
@@ -15,13 +15,11 @@ export default function ContributeForm({ address }: Props) {
   const [loading, setLoading] = useState(false);
 
   const contribute = async (event: FormEvent) => {
-    event.preventDefault();
-
     setLoading(true);
     setError('');
     try {
       const accounts = await web3.eth.getAccounts();
-      await createCampaign(address)
+      await Campaign(address)
         .methods.contribute()
         .send({
           from: accounts[0],
