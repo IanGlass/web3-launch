@@ -8,6 +8,7 @@ export default function RequestRow({ id, request, address, approversCount }) {
   const router = useRouter();
   const { Row, Cell } = Table;
   const { description, amount, recipient, approvalCount, complete } = request;
+  const readyToFinalize = approversCount >= (approversCount / 2);
 
   const approve = async() => {
     const accounts = await web3.eth.getAccounts();
@@ -28,17 +29,17 @@ export default function RequestRow({ id, request, address, approversCount }) {
   }
 
   return (
-    <Row>
+    <Row disabled={complete} positive={readyToFinalize && !complete}>
       <Cell>{id}</Cell>
       <Cell>{description}</Cell>
       <Cell>{web3.utils.fromWei(amount, 'ether')}</Cell>
       <Cell>{recipient}</Cell>
       <Cell>{approvalCount}/{approversCount}</Cell>
       <Cell>
-        <Button onClick={approve} color='green' basic>Approve</Button>
+        {!complete && <Button onClick={approve} color='green' basic>Approve</Button>}
       </Cell>
       <Cell>
-        <Button onClick={finalize} color='red' basic>Finalize</Button>
+        {!complete && readyToFinalize && <Button onClick={finalize} color='red' basic>Finalize</Button>}
       </Cell>
     </Row>
   );

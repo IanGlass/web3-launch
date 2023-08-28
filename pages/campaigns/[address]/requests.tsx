@@ -17,7 +17,9 @@ export async function getServerSideProps(props) {
       await Campaign(props.query.address).methods.requests(index).call()
   );
 
-  const approversCount = await Campaign(props.query.address).methods.approversCount().call()
+  const approversCount = await Campaign(props.query.address)
+    .methods.approversCount()
+    .call();
 
   return {
     props: {
@@ -41,7 +43,9 @@ export default function Requests({ requests, approversCount }) {
     <>
       <h3>Requests</h3>
       <Link href={`/campaigns/${address}/requests/new`}>
-        <Button primary>New request</Button>
+        <Button style={{ marginBottom: '10px' }} floated='right' primary>
+          New request
+        </Button>
       </Link>
       <Table>
         <Header>
@@ -67,6 +71,7 @@ export default function Requests({ requests, approversCount }) {
           ))}
         </Body>
       </Table>
+      <div>Found {requests.length} requests</div>
     </>
   );
 }
