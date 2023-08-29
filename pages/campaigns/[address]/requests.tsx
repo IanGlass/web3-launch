@@ -33,7 +33,7 @@ export async function getServerSideProps(props: Data) {
       contributorsCount,
       requests: requests.map((request) => ({
         description: request.description,
-        amount: request.value,
+        amount: request.amount,
         recipient: request.recipient,
         complete: request.complete,
         approvalCount: parseInt(request.approvalCount),
