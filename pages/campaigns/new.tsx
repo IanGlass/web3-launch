@@ -2,7 +2,6 @@ import React, { FormEvent, useState } from 'react';
 import { Form, Button, Input, Message } from 'semantic-ui-react';
 import Factory from '@/ethereum/factory';
 import fs from 'fs';
-import web3 from '@/ethereum/web3';
 import { useRouter } from 'next/router';
 
 export function getServerSideProps() {
@@ -24,12 +23,11 @@ export default function NewCampaign({ address }) {
     setLoading(true);
     setError('');
     try {
-      const accounts = await web3.eth.getAccounts();
       await Factory(address)
       .methods
       .createCampaign(minimumContribution)
       .send({
-        from: accounts[0]
+        from: window.ethereum.selectedAddress
       });
 
       router.push('/');

@@ -18,11 +18,10 @@ export default function ContributeForm({ address }: Props) {
     setLoading(true);
     setError('');
     try {
-      const accounts = await web3.eth.getAccounts();
       await Campaign(address)
         .methods.contribute()
         .send({
-          from: accounts[0],
+          from: window.ethereum.selectedAddress,
           value: web3.utils.toWei(contribution, 'ether'),
         });
       router.reload();

@@ -11,18 +11,16 @@ export default function RequestRow({ id, request, address, approversCount }) {
   const readyToFinalize = approversCount >= (approversCount / 2);
 
   const approve = async() => {
-    const accounts = await web3.eth.getAccounts();
     await Campaign(address).methods.approveRequest(id).send({
-      from: accounts[0]
+      from: window.ethereum.selectedAddress
     });
 
     router.reload();
   }
 
   const finalize = async () => {
-    const accounts = await web3.eth.getAccounts();
     await Campaign(address).methods.finalizeRequest(id).send({
-      from: accounts[0]
+      from: window.ethereum.selectedAddress
     });
 
     router.reload();

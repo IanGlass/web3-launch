@@ -19,7 +19,6 @@ export default function NewRequest() {
     setLoading(true);
     setError('');
     try {
-      const accounts = await web3.eth.getAccounts();
       await Campaign(address)
         .methods.createRequest(
           description,
@@ -27,7 +26,7 @@ export default function NewRequest() {
           recipient
         )
         .send({
-          from: accounts[0],
+          from: window.ethereum.selectedAddress,
         });
 
       router.push(`/campaigns/${address}/requests`);
