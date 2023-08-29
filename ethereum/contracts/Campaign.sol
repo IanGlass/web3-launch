@@ -15,10 +15,10 @@ contract CampaignFactory {
 
 contract Campaign {
     struct Request  {
-        // Explain to approvers why the request is being made
+        // Explain to contributors why the request is being made
         string description;
         // How much the manager wants to spend
-        uint value;
+        uint amount;
         // The address of the vendor to receive the funds
         address recipient;
         // If the request has been processed
@@ -32,11 +32,11 @@ contract Campaign {
     address public manager;
     uint public minimumContribution;
     // List of contributors to the campaign who can also vote to approve requests made by managers
-    mapping(address => bool) public approvers;
+    mapping(address => bool) public contributors;
     // List of requests that the manager has made to spend funds to different vendors
     Request[] public requests;
-    // The total number of approvers for a campaign. Used to determine if an individual request has enough approvals
-    uint public approversCount;
+    // The total number of contributors for a campaign. Used to determine if an individual request has enough approvals
+    uint public contributorsCount;
 
     modifier onlyManager() {
         require(msg.sender == manager, "Only a manager can call this function");
@@ -51,14 +51,14 @@ contract Campaign {
     function contribute() public payable {
         require(msg.value > minimumContribution, "Must contribute a minimum amount");
 
-        approvers[msg.sender] = true;
-        approversCount++;
+        contributors[msg.sender] = true;
+        contributorsCount++;
     }
 
-    function createRequest(string memory description, uint value, address recipient) public onlyManager {
+    function createRequest(string memory description, uint amount, address recipient) public onlyManager {
         Request memory newRequest = Request({
            description: description,
-           value: value,
+           amount: amount,
            recipient: recipient,
            complete: false,
            approvalCount: 0
@@ -71,7 +71,7 @@ contract Campaign {
         Request storage request = requests[requestIndex];
 
         // Approver must be a contributer of the campaign
-        require(approvers[msg.sender], "Must be a contributor of the Campaign");
+        require(contributors[msg.sender], "Must be a contributor of the Campaign");
         // Approvers should only be able to vote once per request
         require(!request.approvals[msg.sender], "Already approved this request");
 
@@ -86,9 +86,9 @@ contract Campaign {
         require(!request.complete);
 
         // Ensure request has at least 50% approvals of all Campaign contributors
-        require(request.approvalCount > (approversCount / 2));
+        require(request.approvalCount > (contributorsCount / 2));
 
-        request.recipient.transfer(request.value);
+        request.recipient.transfer(request.amount);
         request.complete = true;
     }
 
@@ -103,7 +103,7 @@ contract Campaign {
             minimumContribution,
             address(this).balance,
             requests.length,
-            approversCount,
+            contributorsCount,
             manager
         );
     }

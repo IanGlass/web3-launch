@@ -16,7 +16,11 @@ export async function getServerSideProps() {
   };
 }
 
-export default function Home({ campaigns }) {
+interface Props {
+  campaigns: Array<string>;
+}
+
+export default function Home({ campaigns }: Props) {
   const renderCampaigns = () =>
     campaigns.map((address) => ({
       header: address,

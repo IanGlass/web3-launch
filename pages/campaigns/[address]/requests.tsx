@@ -5,25 +5,32 @@ import { Button, Table } from 'semantic-ui-react';
 import Campaign from '@/ethereum/campaign';
 import { map } from 'async';
 import RequestRow from '@/components/RequestRow';
+import Request from '@/types/Request';
 
-export async function getServerSideProps(props) {
+interface Data {
+  query: {
+    address: string;
+  };
+}
+
+export async function getServerSideProps(props: Data) {
   const requestCount = await Campaign(props.query.address)
     .methods.getRequestsCount()
     .call();
 
   const requests = await map(
     Array.from({ length: requestCount }, (_, index) => index),
-    async (index) =>
+    async (index: number) =>
       await Campaign(props.query.address).methods.requests(index).call()
   );
 
-  const approversCount = await Campaign(props.query.address)
-    .methods.approversCount()
+  const contributorsCount = await Campaign(props.query.address)
+    .methods.contributorsCount()
     .call();
 
   return {
     props: {
-      approversCount,
+      contributorsCount,
       requests: requests.map((request) => ({
         description: request.description,
         amount: request.value,
@@ -34,7 +41,13 @@ export async function getServerSideProps(props) {
     },
   };
 }
-export default function Requests({ requests, approversCount }) {
+
+interface Props {
+  requests: Request[];
+  contributorsCount: number;
+}
+
+export default function Requests({ requests, contributorsCount }: Props) {
   const { Row, Header, HeaderCell, Body } = Table;
   const router = useRouter();
   const { address } = router.query;
@@ -66,7 +79,7 @@ export default function Requests({ requests, approversCount }) {
               id={index}
               request={request}
               address={address}
-              approversCount={approversCount}
+              contributorsCount={contributorsCount}
             />
           ))}
         </Body>

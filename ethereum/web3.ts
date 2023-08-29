@@ -11,7 +11,7 @@ if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
 } else {
   // We are on the server *OR* the user is not running metamask
   const provider = new Web3.providers.HttpProvider(
-    process.env.INFURA_NETWORK
+    process.env.INFURA_NETWORK as string
   );
   web3 = new Web3(provider);
 }

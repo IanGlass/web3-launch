@@ -53,13 +53,13 @@ describe('Campaign Contract', () => {
     assert.equal(manager, managerAccount);
   });
 
-  it('allows people to contribute money and marks them as approvers', async () => {
+  it('allows people to contribute money and marks them as contributors', async () => {
     await campaign.methods.contribute().send({
       value: '200',
       from: contributorAccount
     });
 
-    const isContributor = await campaign.methods.approvers(contributorAccount).call();
+    const isContributor = await campaign.methods.contributors(contributorAccount).call();
     assert(isContributor);
   });
 

@@ -12,8 +12,8 @@ export default function NewRequest() {
   const [loading, setLoading] = useState(false);
 
   const [description, setDescription] = useState('');
-  const [value, setValue] = useState();
-  const [recipient, setRecipient] = useState();
+  const [value, setValue] = useState('');
+  const [recipient, setRecipient] = useState('');
 
   const createRequest = async (event: FormEvent) => {
     setLoading(true);

@@ -17,6 +17,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "ethereum/web3.js", "ethereum/factory.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "ethereum/web3.tsx", "ethereum/factory.ts"],
   "exclude": ["node_modules"]
 }

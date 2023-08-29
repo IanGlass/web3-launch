@@ -9,11 +9,15 @@ export function getServerSideProps() {
   return {
     props: {
       address,
-    }
-  }
+    },
+  };
 }
 
-export default function NewCampaign({ address }) {
+interface Props {
+  address: string;
+}
+
+export default function NewCampaign({ address }: Props) {
   const router = useRouter();
   const [minimumContribution, setMinimumContribution] = useState('');
   const [error, setError] = useState('');
@@ -23,15 +27,12 @@ export default function NewCampaign({ address }) {
     setLoading(true);
     setError('');
     try {
-      await Factory(address)
-      .methods
-      .createCampaign(minimumContribution)
-      .send({
-        from: window.ethereum.selectedAddress
+      await Factory(address).methods.createCampaign(minimumContribution).send({
+        from: window.ethereum.selectedAddress,
       });
 
       router.push('/');
-    } catch(error) {
+    } catch (error) {
       setError(error.message);
     }
     setLoading(false);
@@ -50,7 +51,7 @@ export default function NewCampaign({ address }) {
             onChange={(event) => setMinimumContribution(event.target.value)}
           />
         </Form.Field>
-        {error && <Message negative header="Oops!" content={error} />}
+        {error && <Message negative header='Oops!' content={error} />}
         <Button loading={loading} type='submit' primary>
           Create
         </Button>
@@ -58,4 +59,3 @@ export default function NewCampaign({ address }) {
     </>
   );
 }
-

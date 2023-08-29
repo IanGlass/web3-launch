@@ -3,12 +3,20 @@ import React from 'react';
 import { Table, Button } from 'semantic-ui-react';
 import Campaign from '@/ethereum/campaign';
 import { useRouter } from 'next/router';
+import Request from '@/types/Request';
 
-export default function RequestRow({ id, request, address, approversCount }) {
+interface Props {
+  id: number;
+  request: Request;
+  address: string;
+  contributorsCount: number;
+}
+
+export default function RequestRow({ id, request, address, contributorsCount }: Props) {
   const router = useRouter();
   const { Row, Cell } = Table;
   const { description, amount, recipient, approvalCount, complete } = request;
-  const readyToFinalize = approversCount >= (approversCount / 2);
+  const readyToFinalize = contributorsCount >= (contributorsCount / 2);
 
   const approve = async() => {
     await Campaign(address).methods.approveRequest(id).send({
@@ -32,7 +40,7 @@ export default function RequestRow({ id, request, address, approversCount }) {
       <Cell>{description}</Cell>
       <Cell>{web3.utils.fromWei(amount, 'ether')}</Cell>
       <Cell>{recipient}</Cell>
-      <Cell>{approvalCount}/{approversCount}</Cell>
+      <Cell>{approvalCount}/{contributorsCount}</Cell>
       <Cell>
         {!complete && <Button onClick={approve} color='green' basic>Approve</Button>}
       </Cell>

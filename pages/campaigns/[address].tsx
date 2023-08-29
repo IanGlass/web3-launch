@@ -6,36 +6,47 @@ import web3 from '@/ethereum/web3';
 import ContributeForm from '@/components/ContributeForm';
 import Link from 'next/link';
 
-export async function getServerSideProps(props) {
+interface Data {
+  query: {
+    address: string;
+  }
+}
+
+export async function getServerSideProps(props: Data) {
   const summary = await Campaign(props.query.address)
     .methods.getSummary()
     .call();
   return {
     props: {
-      summary: {
-        minimumContribution: summary[0],
-        balance: web3.utils.fromWei(summary[1], 'ether'),
-        requestsCount: summary[2],
-        approversCount: summary[3],
-        manager: summary[4],
-      },
+      minimumContribution: summary[0],
+      balance: web3.utils.fromWei(summary[1], 'ether'),
+      requestsCount: summary[2],
+      contributorsCount: summary[3],
+      manager: summary[4],
     },
   };
 }
 
-export default function CampaignDetails({ summary }) {
+interface Props {
+  balance: number;
+  manager: string;
+  minimumContribution: string;
+  summary: string;
+  requestsCount: number;
+  contributorsCount: number;
+}
+
+export default function CampaignDetails({
+  balance,
+  manager,
+  minimumContribution,
+  requestsCount,
+  contributorsCount,
+}: Props) {
   const router = useRouter();
   const { address } = router.query;
 
   const renderDetails = () => {
-    const {
-      balance,
-      manager,
-      minimumContribution,
-      requestsCount,
-      approversCount,
-    } = summary;
-
     const items = [
       {
         header: manager,
@@ -54,11 +65,11 @@ export default function CampaignDetails({ summary }) {
         header: requestsCount,
         meta: ' Number of requests',
         description:
-          'A request tries to withdraw money from the contract. Requests must be approved by approvers',
+          'A request tries to withdraw money from the contract. Requests must be approved by contributors',
       },
       {
-        header: approversCount,
-        meta: ' Number of approvers',
+        header: contributorsCount,
+        meta: ' Number of contributors',
         description:
           'Number of people who have already donated to this campaign',
       },
@@ -81,7 +92,7 @@ export default function CampaignDetails({ summary }) {
             <Card.Group items={renderDetails()} />
           </Grid.Column>
           <Grid.Column width={6}>
-            <ContributeForm address={address} />
+            <ContributeForm address={address as string} />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
